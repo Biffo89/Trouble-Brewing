@@ -51,7 +51,10 @@ public class TroubleBrewingPlugin extends Plugin
 	}
 
 	@Subscribe
-	public void onGameStateChanged(GameStateChanged gameStateChanged) {}
+	public void onGameStateChanged(GameStateChanged gameStateChanged)
+	{
+
+	}
 
 	@Provides
 	TroubleBrewingConfig provideConfig(ConfigManager configManager)

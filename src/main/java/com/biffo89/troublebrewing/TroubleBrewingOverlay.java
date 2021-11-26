@@ -11,7 +11,8 @@ import java.awt.*;
 import static net.runelite.api.MenuAction.RUNELITE_OVERLAY_CONFIG;
 import static net.runelite.client.ui.overlay.OverlayManager.OPTION_CONFIGURE;
 
-public class TroubleBrewingOverlay extends OverlayPanel {
+public class TroubleBrewingOverlay extends OverlayPanel
+{
 
     private final Client client;
     private final TroubleBrewingPlugin plugin;
@@ -22,7 +23,8 @@ public class TroubleBrewingOverlay extends OverlayPanel {
     private static final int RED_TEAM_RUM_BOTTLES_ID = 27197512;
 
     @Inject
-    private TroubleBrewingOverlay(TroubleBrewingPlugin plugin, Client client) {
+    private TroubleBrewingOverlay(TroubleBrewingPlugin plugin, Client client)
+    {
         super(plugin);
         setPosition(OverlayPosition.TOP_RIGHT);
         setPriority(OverlayPriority.LOW);
@@ -32,10 +34,10 @@ public class TroubleBrewingOverlay extends OverlayPanel {
     }
 
     @Override
-    public Dimension render(Graphics2D graphics) {
-        if (!isInTroubleBrewing()) {
+    public Dimension render(Graphics2D graphics)
+    {
+        if (!isInTroubleBrewing())
             return null;
-        }
         updatePoints();
         panelComponent.getChildren().add(LineComponent.builder()
                 .left("      Pieces of eight")
@@ -55,16 +57,19 @@ public class TroubleBrewingOverlay extends OverlayPanel {
         return super.render(graphics);
     }
 
-    protected boolean isInTroubleBrewing() {
+    protected boolean isInTroubleBrewing()
+    {
         return client.getLocalPlayer() != null
                 && client.getLocalPlayer().getWorldLocation().getRegionID() == TROUBLE_BREWING_REGION_ID;
     }
 
-    private int getPoints() {
+    private int getPoints()
+    {
         return plugin.getResourcePoints() + plugin.getBottles() * 2;
     }
 
-    private void updatePoints() {
+    private void updatePoints()
+    {
         plugin.setResourcePoints(client.getVarbitValue(CONTRIBUTION_VARBIT_ID));
         boolean isBlueTeam = client.getItemContainer(InventoryID.EQUIPMENT).getItem(EquipmentInventorySlot.HEAD.getSlotIdx()).getId() == BLUE_BANDANA_ID;
         Widget scoreWidget = client.getWidget(RED_TEAM_RUM_BOTTLES_ID+(isBlueTeam?1:0));
