@@ -40,14 +40,13 @@ public class TroubleBrewingPlugin extends Plugin
 	@Override
 	protected void startUp()
 	{
-		log.info("Trouble Brewing started!");
 		overlayManager.add(troubleBrewingOverlay);
 	}
 
 	@Override
 	protected void shutDown() throws Exception
 	{
-		log.info("Trouble Brewing stopped!");
+		overlayManager.remove(troubleBrewingOverlay);
 	}
 
 	@Subscribe
