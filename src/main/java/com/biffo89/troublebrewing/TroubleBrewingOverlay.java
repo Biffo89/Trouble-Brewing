@@ -17,6 +17,7 @@ public class TroubleBrewingOverlay extends OverlayPanel
     private final Client client;
     private final TroubleBrewingPlugin plugin;
 
+    private static final int POINTS_PER_RUM = 10;
     private static final int CONTRIBUTION_VARBIT_ID = 2290;
     private static final int BLUE_BANDANA_ID = 8949;
     private static final int TROUBLE_BREWING_REGION_ID = 15150;
@@ -48,7 +49,7 @@ public class TroubleBrewingOverlay extends OverlayPanel
                 .build());
         panelComponent.getChildren().add(LineComponent.builder()
                 .left("Rum")
-                .right("   "+plugin.getBottles()*2)
+                .right("   "+plugin.getBottles()*POINTS_PER_RUM)
                 .build());
         panelComponent.getChildren().add(LineComponent.builder()
                 .left("Total")
@@ -65,7 +66,7 @@ public class TroubleBrewingOverlay extends OverlayPanel
 
     private int getPoints()
     {
-        return plugin.getResourcePoints() + plugin.getBottles() * 2;
+        return plugin.getResourcePoints() + plugin.getBottles() * POINTS_PER_RUM;
     }
 
     private void updatePoints()
