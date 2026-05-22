@@ -1,5 +1,7 @@
 package com.biffo89.troublebrewing;
 
+import com.biffo89.troublebrewing.models.HighlightModel;
+import com.biffo89.troublebrewing.models.SweetgrubMound;
 import com.google.inject.Provides;
 import javax.inject.Inject;
 
@@ -7,6 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
+import net.runelite.api.events.GameObjectDespawned;
+import net.runelite.api.events.GameObjectSpawned;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.client.Notifier;
@@ -16,6 +20,9 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @PluginDescriptor(
@@ -28,6 +35,8 @@ public class TroubleBrewingPlugin extends Plugin
 	private static final int CONTRIBUTION_VARBIT_ID = 2290;
 	private static final int BREW_DAN_BOTTLE_VARBIT = 2286; // Red Team
 	private static final int BREW_SAN_BOTTLE_VARBIT = 2287; // Blue Team
+
+	private static final int SWEETGRUB_MOUND_ID = 15946;
 
 	@Inject
 	private Client client;
@@ -45,8 +54,14 @@ public class TroubleBrewingPlugin extends Plugin
 	@Inject
 	private TroubleBrewingOverlay troubleBrewingOverlay;
 
+	@Inject
+	private ModelOutlineOverlay modelOutlineOverlay;
+
 	@Getter
 	private TroubleBrewingStats game;
+
+	@Getter
+	private final List<HighlightModel> highlightModels = new ArrayList<>();
 
 	private boolean gameActive;
 
@@ -55,12 +70,15 @@ public class TroubleBrewingPlugin extends Plugin
 	{
 		game = new TroubleBrewingStats(this, client);
 		overlayManager.add(troubleBrewingOverlay);
+		overlayManager.add(modelOutlineOverlay);
 	}
 
 	@Override
 	protected void shutDown() throws Exception
 	{
 		overlayManager.remove(troubleBrewingOverlay);
+		overlayManager.remove(modelOutlineOverlay);
+		highlightModels.clear();
 	}
 
 	@Subscribe
@@ -100,6 +118,22 @@ public class TroubleBrewingPlugin extends Plugin
 
 			int redState = client.getVarbitValue(BREW_DAN_BOTTLE_VARBIT);
 			game.updateRedRumState(redState);
+		}
+	}
+
+	@Subscribe
+	public void onGameObjectSpawned(GameObjectSpawned event) {
+		GameObject gameObject = event.getGameObject();
+		if (gameObject.getId() == SWEETGRUB_MOUND_ID) {
+			highlightModels.add(new SweetgrubMound(client, gameObject));
+		}
+	}
+
+	@Subscribe
+	public void onGameObjectDespawned(GameObjectDespawned event) {
+		GameObject gameObject = event.getGameObject();
+		if (gameObject.getId() == SWEETGRUB_MOUND_ID) {
+			highlightModels.removeIf(obj -> obj.getGameObject() == gameObject);
 		}
 	}
 
