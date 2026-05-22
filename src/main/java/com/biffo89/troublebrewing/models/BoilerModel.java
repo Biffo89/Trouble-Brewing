@@ -30,18 +30,30 @@ public class BoilerModel extends TeamImageModel {
 
     @Override
     protected void preprocess() {
+
         if (gameObject.getId() == BOILER_1_EMPTY || gameObject.getId() == BOILER_2_EMPTY || gameObject.getId() == BOILER_3_EMPTY) {
             imageId = LOGS_ID;
             outlineColor = Color.RED;
         } else if (gameObject.getId() == BOILER_1_UNLIT || gameObject.getId() == BOILER_2_UNLIT || gameObject.getId() == BOILER_3_UNLIT) {
             imageId = TINDERBOX_ID;
             outlineColor = Color.RED;
-        } else if (gameObject.getId() == BOILER_1_LIT) {
-            setLogs(plugin.getGame().getBoiler1Logs());
         } else if (gameObject.getId() == BOILER_2_LIT) {
             setLogs(plugin.getGame().getBoiler2Logs());
-        } else if (gameObject.getId() == BOILER_3_LIT) {
-            setLogs(plugin.getGame().getBoiler3Logs());
+        }
+
+        // Blue team's BOILER_1 ID is associated with boiler 3 on the score card
+        if (plugin.getGame().isBlueTeam()) {
+            if (gameObject.getId() == BOILER_1_LIT) {
+                setLogs(plugin.getGame().getBoiler3Logs());
+            } else if (gameObject.getId() == BOILER_3_LIT) {
+                setLogs(plugin.getGame().getBoiler1Logs());
+            }
+        } else {
+            if (gameObject.getId() == BOILER_1_LIT) {
+                setLogs(plugin.getGame().getBoiler1Logs());
+            } else if (gameObject.getId() == BOILER_3_LIT) {
+                setLogs(plugin.getGame().getBoiler3Logs());
+            }
         }
     }
 
