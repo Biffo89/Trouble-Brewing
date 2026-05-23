@@ -19,6 +19,7 @@ public class PipeRepairModel extends TeamImageModel {
         super(plugin, client, gameObject);
         imageId = PIPE_ID;
         outlineColor = Color.RED;
+        message = getBurnState(gameObject.getId());
     }
 
     private static String getBurnState(int id) {

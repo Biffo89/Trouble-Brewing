@@ -20,6 +20,7 @@ public class BridgeRepairModel extends TeamImageModel {
         imageId = BRIDGE_ID;
         outlineColor = Color.RED;
         outlineIgnoreTeam = true;
+        message = getBurnState(gameObject.getId());
     }
 
     private static String getBurnState(int id) {
