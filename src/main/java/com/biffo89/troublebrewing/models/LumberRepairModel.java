@@ -13,7 +13,7 @@ public class LumberRepairModel extends TeamImageModel {
 
     private static final int[] HOPPER_BURN_STATE_1 = { 15853, 15851, 15879, 15877 };
     private static final int[] HOPPER_BURN_STATE_2 = { 15852, 15850, 15878, 15876 };
-    private static final int[] HOPPER_BURN_STATE_3 = { 15484, 15880 };
+    private static final int[] HOPPER_BURN_STATE_3 = { 15854, 15880 };
 
     public LumberRepairModel(TroubleBrewingPlugin plugin, Client client, GameObject gameObject) {
         super(plugin, client, gameObject);
