@@ -3,8 +3,10 @@ package com.biffo89.troublebrewing;
 import com.google.inject.Inject;
 import net.runelite.api.*;
 import net.runelite.api.widgets.Widget;
+import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.overlay.*;
 import net.runelite.client.ui.overlay.components.LineComponent;
+import net.runelite.client.util.Text;
 
 import java.awt.*;
 
@@ -18,10 +20,7 @@ public class TroubleBrewingOverlay extends OverlayPanel
     private final TroubleBrewingPlugin plugin;
 
     private static final int POINTS_PER_RUM = 10;
-    private static final int CONTRIBUTION_VARBIT_ID = 2290;
-    private static final int BLUE_BANDANA_ID = 8949;
     private static final int TROUBLE_BREWING_REGION_ID = 15150;
-    private static final int RED_TEAM_RUM_BOTTLES_ID = 27197512;
 
     @Inject
     private TroubleBrewingOverlay(TroubleBrewingPlugin plugin, Client client)
@@ -37,44 +36,77 @@ public class TroubleBrewingOverlay extends OverlayPanel
     @Override
     public Dimension render(Graphics2D graphics)
     {
-        if (!isInTroubleBrewing())
+        if (!plugin.getGame().isInTroubleBrewing())
             return null;
-        updatePoints();
+
         panelComponent.getChildren().add(LineComponent.builder()
                 .left("      Pieces of eight")
                 .build());
         panelComponent.getChildren().add(LineComponent.builder()
                 .left("Contribution")
-                .right("   "+plugin.getResourcePoints())
+                .right("   "+plugin.getGame().getResourcePoints())
+                .rightColor(plugin.getGame().getResourcePoints() >= 100 ? ColorScheme.PROGRESS_COMPLETE_COLOR : Color.white)
                 .build());
         panelComponent.getChildren().add(LineComponent.builder()
                 .left("Rum")
-                .right("   "+plugin.getBottles()*POINTS_PER_RUM)
+                .right("   "+plugin.getGame().getBottles()*POINTS_PER_RUM)
                 .build());
         panelComponent.getChildren().add(LineComponent.builder()
                 .left("Total")
-                .right("   "+getPoints())
+                .right("   "+plugin.getGame().getPoints())
                 .build());
+        if (plugin.getConfig().brewstats()) {
+            panelComponent.getChildren().add(LineComponent.builder()
+                    .left("--------")
+                    .right("--------")
+                    .build());
+            panelComponent.getChildren().add(LineComponent.builder()
+                    .left("Bitternuts")
+                    .right("   "+plugin.getGame().getBitternuts())
+                    .rightColor(plugin.getGame().getBitternutsComplete() ? ColorScheme.PROGRESS_COMPLETE_COLOR : Color.white)
+                    .build());
+            panelComponent.getChildren().add(LineComponent.builder()
+                    .left("Grubs")
+                    .right("   "+plugin.getGame().getGrubs())
+                    .rightColor(plugin.getGame().getGrubsComplete() ? ColorScheme.PROGRESS_COMPLETE_COLOR : Color.white)
+                    .build());
+            panelComponent.getChildren().add(LineComponent.builder()
+                    .left("Buckets")
+                    .right("   "+plugin.getGame().getBuckets())
+                    .rightColor(plugin.getGame().getBucketsComplete() ? ColorScheme.PROGRESS_COMPLETE_COLOR : Color.white)
+                    .build());
+            panelComponent.getChildren().add(LineComponent.builder()
+                    .left("Water")
+                    .right("   "+plugin.getGame().getColouredWater())
+                    .rightColor(plugin.getGame().getColouredWaterComplete() ? ColorScheme.PROGRESS_COMPLETE_COLOR : Color.white)
+                    .build());
+            panelComponent.getChildren().add(LineComponent.builder()
+                    .left("Bark")
+                    .right("   "+plugin.getGame().getBark())
+                    .rightColor(plugin.getGame().getBarkComplete() ? ColorScheme.PROGRESS_COMPLETE_COLOR : Color.white)
+                    .build());
+            panelComponent.getChildren().add(LineComponent.builder()
+                    .left("--------")
+                    .right("--------")
+                    .build());
+            panelComponent.getChildren().add(LineComponent.builder()
+                    .left("Rum Eligible Level")
+                    .right("   "+plugin.getGame().getRumEligibility())
+                    .build());
+            panelComponent.getChildren().add(LineComponent.builder()
+                    .left("Brew Time")
+                    .right("   "+plugin.getGame().getBrewEndTime())
+                    .build());
+            panelComponent.getChildren().add(LineComponent.builder()
+                    .left("Rum State")
+                    .right("   "+plugin.getGame().getRumStateString())
+                    .rightColor(plugin.getGame().isRumReady() ? Color.yellow : Color.white)
+                    .build());
+            panelComponent.getChildren().add(LineComponent.builder()
+                    .left("Game Time")
+                    .right("   "+plugin.getGame().getGameEndTime())
+                    .build());
+        }
         return super.render(graphics);
-    }
-
-    protected boolean isInTroubleBrewing()
-    {
-        return client.getLocalPlayer() != null
-                && client.getLocalPlayer().getWorldLocation().getRegionID() == TROUBLE_BREWING_REGION_ID;
-    }
-
-    private int getPoints()
-    {
-        return plugin.getResourcePoints() + plugin.getBottles() * POINTS_PER_RUM;
-    }
-
-    private void updatePoints()
-    {
-        plugin.setResourcePoints(client.getVarbitValue(CONTRIBUTION_VARBIT_ID));
-        boolean isBlueTeam = client.getItemContainer(InventoryID.EQUIPMENT).getItem(EquipmentInventorySlot.HEAD.getSlotIdx()).getId() == BLUE_BANDANA_ID;
-        Widget scoreWidget = client.getWidget(RED_TEAM_RUM_BOTTLES_ID+(isBlueTeam?1:0));
-        if (scoreWidget == null) return;
-        plugin.setBottles(Integer.parseInt(scoreWidget.getText()));
     }
 }
