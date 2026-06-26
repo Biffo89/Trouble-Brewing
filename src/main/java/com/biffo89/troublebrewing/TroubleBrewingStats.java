@@ -31,6 +31,9 @@ public class TroubleBrewingStats {
     private static final int COLOURWATER_COUNT_INDEX = 50;
     private static final int BARK_COUNT_INDEX = 51;
     private static final int BREW_TIME_INDEX = 74;
+    private static final int BOILER_1_INDEX = 44;
+    private static final int BOILER_2_INDEX = 45;
+    private static final int BOILER_3_INDEX = 46;
 
     private static final int BUCKETS_PER_RUM = 5;
     private static final int WATER_PER_RUM = 3;
@@ -63,6 +66,15 @@ public class TroubleBrewingStats {
     @Getter
     private int rumEligibility = 0;
 
+    @Getter
+    private int boiler1Logs = 0;
+
+    @Getter
+    private int boiler2Logs = 0;
+
+    @Getter
+    private int boiler3Logs = 0;
+
     public TroubleBrewingStats(TroubleBrewingPlugin plugin, Client client) {
         this.client = client;
         this.plugin = plugin;
@@ -93,6 +105,9 @@ public class TroubleBrewingStats {
             teamBuckets = 0;
             teamColouredWater = 0;
             teamBark = 0;
+            boiler1Logs = 0;
+            boiler2Logs = 0;
+            boiler3Logs = 0;
         }
     }
 
@@ -126,6 +141,10 @@ public class TroubleBrewingStats {
     {
         return client.getLocalPlayer() != null
                 && client.getLocalPlayer().getWorldLocation().getRegionID() == TROUBLE_BREWING_REGION_ID;
+    }
+
+    public boolean isBlueTeam() {
+        return client.getItemContainer(InventoryID.EQUIPMENT).getItem(EquipmentInventorySlot.HEAD.getSlotIdx()).getId() == BLUE_BANDANA_ID;
     }
 
     public int getPoints()
@@ -239,6 +258,10 @@ public class TroubleBrewingStats {
         int colouredWater = extractNumericValue(COLOURWATER_COUNT_INDEX);
         int bark = extractNumericValue(BARK_COUNT_INDEX);
 
+        boiler1Logs = extractNumericValue(BOILER_1_INDEX);
+        boiler2Logs = extractNumericValue(BOILER_2_INDEX);
+        boiler3Logs = extractNumericValue(BOILER_3_INDEX);
+
         boolean bottleStarted = false;
         if (bitternuts < teamBitternuts) {
             bottleStarted = true;
@@ -325,9 +348,5 @@ public class TroubleBrewingStats {
         }
 
         brewsAttemptsRemaining = (int) Math.floor((double)seconds / BREWING_TIME_IN_SECONDS);
-    }
-
-    private boolean isBlueTeam() {
-        return client.getItemContainer(InventoryID.EQUIPMENT).getItem(EquipmentInventorySlot.HEAD.getSlotIdx()).getId() == BLUE_BANDANA_ID;
     }
 }
